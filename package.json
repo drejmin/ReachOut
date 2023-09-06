@@ -1,0 +1,20 @@
+{
+  "name": "reachout",
+  "version": "1.0.0",
+  "description": "A app for making new connections and reaching out to new people.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "cd client && npm start",
+    "server": "node server.js",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0"
+  }
+}
