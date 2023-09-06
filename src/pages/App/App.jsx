@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import AuthPage from '../AuthPage/AuthPage';
 import ChatPage from '../ChatPage/ChatPage';
-import AuthPage from '../RoomPage/RoomPage';
+import RoomPage from '../RoomPage/RoomPage';
 import NavBar from '../../components/NavBar/NavBar';
 
 export default function App() {
@@ -32,7 +32,13 @@ export default function App() {
             :
             <AuthPage setUser={setUser} />
         }
-    </main>
+        {/* socket io server for instant communication */}
+        <script src="/socket.io/socket.io.js"></script>
+            <script>
+            var socket = io();
+        </script>
+        </main>
+        
 );
 
 }
