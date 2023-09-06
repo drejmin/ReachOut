@@ -1,22 +1,39 @@
-import logo from './logo.svg';
+import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import React, { useEffect } from 'react';
 import axios from 'axios';
+import AuthPage from '../AuthPage/AuthPage';
+import ChatPage from '../ChatPage/ChatPage';
+import AuthPage from '../RoomPage/RoomPage';
+import NavBar from '../../components/NavBar/NavBar';
 
-function App() {
-  useEffect(() => {
+export default function App() {
+    const [user, setUser] = useState(getUser());
+  
+    useEffect(() => {
       axios.get('http://localhost:3001/')
       .then(response => {
           console.log(response.data);
       });
   }, []);
 
-  return (
-      <div className="App">
-          <h1>MERN Stack</h1>
-      </div>
-  );
+    return (
+        <main className="App">
+        { user ?
+            <>
+            <NavBar user={user} setUser={setUser} />
+            <Routes>
+                {/* Route components in here */}
+                <Route path="/orders/new" element={<NewOrderPage />} />
+                <Route path="/orders" element={<OrderHistoryPage />} />
+            </Routes>
+            </>
+            :
+            <AuthPage setUser={setUser} />
+        }
+    </main>
+);
+
 }
 
-
-export default App;
