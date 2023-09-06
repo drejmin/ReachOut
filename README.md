@@ -48,11 +48,9 @@ Mental health and connections are hard as we get older. This app will help to se
 
 # MVP Goals
 - Users able to login/signup
-- Set up admin and admin role
 - User home pages 
 - Send/Recieve messages
-- Create and join Chat Room
-- Search for users
+
 
 # Stretch Goals
 - A chatbot created to talk and help out users
@@ -61,3 +59,6 @@ Mental health and connections are hard as we get older. This app will help to se
 - Ability to share images/gifs
 - Disappearing Messages
 - A built in calming game
+- Set up admin and admin role
+- Create and join Chat Room
+- Search for users
