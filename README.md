@@ -37,6 +37,7 @@ Mental health and connections are hard as we get older. This app will help to se
 <img src = "ERD Chat.jpg">
 
 # Wireframes
+<img src = "ERD Chat-Page-2.jpg">
 
 # User Stories
 - I want to be able to search for a specific user
