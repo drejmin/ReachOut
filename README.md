@@ -9,6 +9,7 @@ Mental health and connections are hard as we get older. This app will help to se
 - Node/Express for endpoints and possible API
 - MongoDB for storing app members and their messages
 - Socket.io for real time communication
+- OAUTH authentication
 
 # Restful Routing
 | HTTP Verb | URL Path         | Action         | Description                                            |
@@ -33,6 +34,7 @@ Mental health and connections are hard as we get older. This app will help to se
 | DELETE    | /room/:id        | destroy        | Delete a specific room by ID                           |
 
 # ERD
+<img src = "/Users/deandreminor/code/projects/ReachOut/ERD Chat.jpg">
 
 # Wireframes
 
