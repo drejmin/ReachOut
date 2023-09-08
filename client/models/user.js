@@ -6,18 +6,13 @@ const SALT_ROUNDS = 6;
 
 const userSchema = new Schema({
   name: {type: String, required: true},
-  email: {
-    type: String,
-    unique: true,
-    trim: true,
-    lowercase: true,
-    required: true
+  googleId:{
+    type:String,
+    required:true,
   },
-  password: {
-    type: String,
-    required: true
-  }
-}, {
+  email:String,
+  avatar:String,
+  }, {
   timestamps: true,
   toJSON: {
     transform: function(doc, ret) {
