@@ -1,5 +1,11 @@
 // server.js
+const createError = require('http-errors');
 const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const session = require('express-session');
+var passport = require('passport');
 const mongoose = require('mongoose');
 const app = express();
 const http = require('http');
@@ -9,14 +15,23 @@ const server = http.createServer(app);
 const {Server} = require("socket.io");
 const io = new Server(server);
 const PORT = 3001;
-//Google Oauth
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const session = require('express-session');
 
-require('./config/database');
+//Google Oauth
+
 require('dotenv').config();
-require('./config/passport');
+require('./client/config/database');
+require('./client/config/passport');
+
+// view engine setup
+app.set('app', path.join(__dirname, 'app'));
+app.set('view engine', 'ejs');
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use(session({
     secret: process.env.SECRET,
@@ -77,44 +92,4 @@ io.on("connection", (socket) => {
     });
   });
 
-// initialize Google Oauth
-// Initialize session
-app.use(session({
-    secret: 'some-secret',
-    resave: false,
-    saveUninitialized: true,
-  }));
-  
-  // Initialize Passport
-  app.use(passport.initialize());
-  app.use(passport.session());
-  
-  passport.serializeUser((user, done) => {
-    done(null, user);
-  });
-  
-  passport.deserializeUser((obj, done) => {
-    done(null, obj);
-  });
-  
-  passport.use(new GoogleStrategy({
-    clientID: '941626234497-d8j72o6uhmvk54b19ssb5j3757mf30js.apps.googleusercontent.com',
-    clientSecret: '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',
-    callbackURL: 'http://localhost:3000/auth/google/callback',
-  },
-  (accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
-  }));
-
-  // Redirect to Google for OAuth login
-app.get('/auth/google',
-passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }),
-);
-
-// The callback after Google has authenticated the user
-app.get('/auth/google/callback', 
-passport.authenticate('google', { failureRedirect: '/' }),
-(req, res) => {
-  res.redirect('/');
-}
-);
+  module.exports = app;

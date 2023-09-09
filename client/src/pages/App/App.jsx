@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
+// import { getUser } from '../../utilities/users-service';
 import './App.css';
 import React, { useEffect } from 'react';
 import axios from 'axios';
@@ -9,7 +10,7 @@ import RoomPage from '../RoomPage/RoomPage';
 import NavBar from '../../components/NavBar/NavBar';
 
 export default function App() {
-    const [user, setUser] = useState(getUser());
+    const [user, setUser] = useState(user());
   
     useEffect(() => {
       axios.get('http://localhost:3001/')
