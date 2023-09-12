@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-// import { getUser } from '../../utilities/users-service';
+import { signUp } from '../utilities/users-service';
 import './App.css';
 import React, { useEffect } from 'react';
 import axios from 'axios';
@@ -10,7 +10,7 @@ import RoomPage from '../RoomPage/RoomPage';
 import NavBar from '../../components/NavBar/NavBar';
 
 export default function App() {
-    const [user, setUser] = useState(user());
+    const [user, setUser] = useState(null);
   
     useEffect(() => {
       axios.get('http://localhost:3001/api')
@@ -22,7 +22,7 @@ export default function App() {
         <main className="App">
         { user ?
             <>
-            <NavBar user={user} setUser={setUser} />
+            <NavBar user={user} />
             <Routes>
                 {/* Route components in here */}
                 <Route path="/chat/msg" element={<ChatPage />} />
