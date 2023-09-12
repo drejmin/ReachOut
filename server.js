@@ -50,7 +50,7 @@ app.use(session({
   saveUninitialized: true
 }));
 
-app.get('/*', function(req, res) {
+app.get('./src/pages/App/App.jsx', function(req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
@@ -91,6 +91,7 @@ app.listen(port, function(){
 //socket.io
 const CHAT_BOT = 'ChatBot'
 let chatRoom='';
+chatRoom=room;
 let allUsers=[];
 const server = http.createServer(app);
 const {Server} = require("socket.io");
@@ -114,13 +115,14 @@ const getKey = (map, val) => {
 };
 
 io.on("connection", (socket) => {
-  chatRoom = 'room';
+  chatRoom = room;
   global.chatSocket = socket;
   
     socket.on("addUser", (userId) => {
       onlineUsers.set(userId, socket.id);
       socket.emit("getUsers", Array.from(onlineUsers));
     });
+    
     socket.on('join_room', (data) => {
       const { user, room } = data;
       socket.join(room); 
