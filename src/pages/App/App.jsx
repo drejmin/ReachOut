@@ -11,7 +11,8 @@ import NavBar from '../../components/NavBar/NavBar';
 
 export default function App() {
     const [user, setUser] = useState(null);
-  
+    const [room, setRoom] = useState('');
+
     useEffect(() => {
       axios.get('http://localhost:3001/api')
       .then((response) => response.json())

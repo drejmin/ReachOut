@@ -35,7 +35,7 @@
   
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "react-scripts build,",
+    "build": "react-scripts build",
     "server": "node server.js",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm start\"",
     "start": "react-scripts start", 
