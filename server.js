@@ -114,7 +114,7 @@ const getKey = (map, val) => {
 };
 
 io.on("connection", (socket) => {
-  chatRoom = room;
+  chatRoom = 'room';
   global.chatSocket = socket;
   
     socket.on("addUser", (userId) => {
