@@ -89,6 +89,7 @@ app.listen(port, function(){
 
 
 //socket.io
+const CHAT_BOT = 'ChatBot'
 const server = http.createServer(app);
 const {Server} = require("socket.io");
 // const PORT = 3001;
@@ -96,10 +97,13 @@ const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
     credentials: true,
+    methods:['GET','POST'],
   },
 });
 // io.use(VerifySocketToken);
 global.onlineUsers = new Map();
+
+server.listen(4000,()=>'Server is running on port 3000')
 
 const getKey = (map, val) => {
   for (let [key, value] of map.entries()) {
@@ -114,6 +118,30 @@ io.on("connection", (socket) => {
       onlineUsers.set(userId, socket.id);
       socket.emit("getUsers", Array.from(onlineUsers));
     });
+    socket.on('join_room', (data) => {
+      const { user, room } = data;
+      socket.join(room); 
+    });
+
+    let __createdtime__ = Date.now();
+
+    socket.to(room).emit('receive_message', {
+      message: `${username} has joined the chat room`,
+      username: CHAT_BOT,
+      __createdtime__,
+    });
+
+    chatRoom = room;
+    allUsers.push({ id: socket.id, user, room });
+    chatRoomUsers = allUsers.filter((user) => user.room === room);
+    socket.to(room).emit('chatroom_users', chatRoomUsers);
+    socket.emit('chatroom_users', chatRoomUsers);
+
+    socket.emit('receive_message', {
+      message: `Welcome ${user}`,
+      username: CHAT_BOT,
+      __createdtime__,
+    });
   
     socket.on("sendMessage", ({ senderId, receiverId, message }) => {
       const sendUserSocket = onlineUsers.get(receiverId);
@@ -123,6 +151,14 @@ io.on("connection", (socket) => {
           message,
         });
       }
+    });
+
+    socket.on('send_message', (data) => {
+      const { message, user, room, __createdtime__ } = data;
+      io.in(room).emit('receive_message', data);
+      mongoSaveMessage(message, user, room, __createdtime__) 
+        .then((response) => console.log(response))
+        .catch((err) => console.log(err));
     });
   
     socket.on("disconnect", () => {
