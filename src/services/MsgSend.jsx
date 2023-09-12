@@ -13,9 +13,8 @@ export default function MsgSend({ socket, user, room }){
   };
 
   return (
-    <div className={styles.MsgSendContainer}>
+    <div>
       <input
-        className={styles.messageInput}
         placeholder='Message...'
         onChange={(evt) => setMessage(evt.target.value)}
         value={message}

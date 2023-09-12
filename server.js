@@ -1,5 +1,4 @@
 // server.js
-const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -10,6 +9,7 @@ const mongoose = require('mongoose');
 const app = express();
 const http = require('http');
 const cors = require('cors');
+
 
 //"node server.js",
 //"cd build && npm start",
@@ -90,6 +90,8 @@ app.listen(port, function(){
 
 //socket.io
 const CHAT_BOT = 'ChatBot'
+let chatRoom='';
+let allUsers=[];
 const server = http.createServer(app);
 const {Server} = require("socket.io");
 // const PORT = 3001;
@@ -112,7 +114,8 @@ const getKey = (map, val) => {
 };
 
 io.on("connection", (socket) => {
-    global.chatSocket = socket;
+  chatRoom = room;
+  global.chatSocket = socket;
   
     socket.on("addUser", (userId) => {
       onlineUsers.set(userId, socket.id);
@@ -126,12 +129,11 @@ io.on("connection", (socket) => {
     let __createdtime__ = Date.now();
 
     socket.to(room).emit('receive_message', {
-      message: `${username} has joined the chat room`,
+      message: `${user} has joined the chat room`,
       username: CHAT_BOT,
       __createdtime__,
     });
 
-    chatRoom = room;
     allUsers.push({ id: socket.id, user, room });
     chatRoomUsers = allUsers.filter((user) => user.room === room);
     socket.to(room).emit('chatroom_users', chatRoomUsers);

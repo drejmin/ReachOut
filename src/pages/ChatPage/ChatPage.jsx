@@ -1,7 +1,7 @@
 import MessagesReceived from '../../services/MsgService';
 import MsgSend from '../../services/MsgSend';
 
-export default function ChatPage({ socket }){
+export default function ChatPage({user, room, socket }){
   return (
     <div>
       <div>

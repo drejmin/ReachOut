@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 
 
@@ -22,7 +21,6 @@ export default function HomePage({ user, setUser, room, setRoom, socket }){
             />
 
             <select
-            className={styles.input}
             onChange={(evt) => setRoom(evt.target.value)} 
             >
               <option>-- Select Room --</option>
@@ -32,7 +30,7 @@ export default function HomePage({ user, setUser, room, setRoom, socket }){
               <option value='react'>React</option>
             </select>
     
-            <button className='btn btn-secondary'>Join Room</button>
+            <button className='btn btn-secondary' onCLick={joinRoom}>Join Room</button>
           </div>
         </div>
       );
