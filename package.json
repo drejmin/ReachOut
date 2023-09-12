@@ -3,16 +3,7 @@
   "version": "1.0.0",
   "description": "A app for making new connections and reaching out to new people.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "client": "cd client && npm start",
-    "server": "node server.js",
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
-    "start": "node server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": true,
   "dependencies": {
     "bcrypt": "^5.1.1",
     "buffer": "^6.0.3",
@@ -32,9 +23,47 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "serve-favicon": "^2.5.0",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.5.0",
+    "node": "^20.6.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
   },
+  
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "react-scripts build,",
+    "server": "node server.js",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm start\"",
+    "start": "react-scripts start", 
+    "eject": "react-scripts eject"
+    
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
     "react-router-dom": "^6.15.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

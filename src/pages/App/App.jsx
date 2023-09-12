@@ -13,10 +13,9 @@ export default function App() {
     const [user, setUser] = useState(user());
   
     useEffect(() => {
-      axios.get('http://localhost:3001/')
-      .then(response => {
-          console.log(response.data);
-      });
+      axios.get('http://localhost:3001/api')
+      .then((response) => response.json())
+    //   .then((data) => setMessage(data.message));
   }, []);
 
     return (
@@ -43,4 +42,3 @@ export default function App() {
 );
 
 }
-
