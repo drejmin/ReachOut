@@ -39,11 +39,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// app.use(session({
-//   secret: process.env.SECRET,
-//   resave: false,
-//   saveUninitialized: true
-// }));
+app.use(session({
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: true
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -61,9 +61,9 @@ app.get('/', (req, res) => {
   res.send('Hello, world!');
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(__dirname + '/index.html');
+// });
 
 app.listen(port, function(){
   console.log(`Server is running on port ${port}`);
@@ -75,9 +75,9 @@ app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'client', 'index.html'));
 });
 
-app.listen(port, function() {
-  console.log(`Express app running on port ${port}`);
-});
+// app.listen(port, function() {
+//   console.log(`Express app running on port ${port}`);
+// });
 
 
 //socket.io
