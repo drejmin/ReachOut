@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 
-
 export default function HomePage({ user, setUser, room, setRoom, socket }){
   const navigate = useNavigate(); 
 

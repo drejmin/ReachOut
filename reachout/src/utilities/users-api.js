@@ -1,4 +1,4 @@
-// This is the base path of the express route we define([
+
 const BASE_URL = '/api/users';
 
 export async function signUp(userData){
