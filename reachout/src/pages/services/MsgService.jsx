@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 export default function Messages({ socket }){
   const [messagesRecieved, setMessagesReceived] = useState([]);
 
-  // Runs whenever a socket event is recieved from the server
   useEffect(() => {
     socket.on('receive_message', (data) => {
       console.log(data);
@@ -17,11 +16,11 @@ export default function Messages({ socket }){
       ]);
     });
 
-	// Remove event listener on component unmount
+	
     return () => socket.off('receive_message');
   }, [socket]);
 
-  // dd/mm/yyyy, hh:mm:ss
+  
   function formatDateFromTimestamp(timestamp) {
     const date = new Date(timestamp);
     return date.toLocaleString();

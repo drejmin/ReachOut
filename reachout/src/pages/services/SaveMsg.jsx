@@ -6,7 +6,7 @@ export default function SaveMsg(message, user, room) {
 
   var data = JSON.stringify({
     operation: 'insert',
-    schema: 'realtime_chat_app',
+    schema: 'User',
     table: 'messages',
     records: [
       {
@@ -22,7 +22,7 @@ export default function SaveMsg(message, user, room) {
     url: dbUrl,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: dbPw,
+      Authorization: dbUrl,
     },
     data: data,
   };
