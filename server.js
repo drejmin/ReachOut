@@ -89,86 +89,171 @@ app.listen(port, function(){
 
 
 //socket.io
-const CHAT_BOT = 'ChatBot'
-let chatRoom='';
-chatRoom=room;
-let allUsers=[];
+const { Server } = require("socket.io");
+// const app = require("app"); // Include your app here
+const CHAT_BOT = 'ChatBot';
+
 const server = http.createServer(app);
-const {Server} = require("socket.io");
-// const PORT = 3001;
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
     credentials: true,
-    methods:['GET','POST'],
+    methods: ['GET', 'POST'],
   },
 });
-// io.use(VerifySocketToken);
+
 global.onlineUsers = new Map();
+let allUsers = [];
 
-server.listen(4000,()=>'Server is running on port 3000')
+server.listen(4000, () => console.log('Server is running on port 4000'));
 
-const getKey = (map, val) => {
-  for (let [key, value] of map.entries()) {
-    if (value === val) return key;
+const getKeyFromValue = (map, value) => {
+  for (const [key, val] of map.entries()) {
+    if (val === value) return key;
   }
+  return null;
 };
 
 io.on("connection", (socket) => {
-  chatRoom = room;
-  global.chatSocket = socket;
-  
-    socket.on("addUser", (userId) => {
-      onlineUsers.set(userId, socket.id);
-      socket.emit("getUsers", Array.from(onlineUsers));
-    });
-    
-    socket.on('join_room', (data) => {
-      const { user, room } = data;
-      socket.join(room); 
-    });
+  const createdTime = Date.now();
 
-    let __createdtime__ = Date.now();
-
-    socket.to(room).emit('receive_message', {
-      message: `${user} has joined the chat room`,
-      username: CHAT_BOT,
-      __createdtime__,
-    });
-
-    allUsers.push({ id: socket.id, user, room });
-    chatRoomUsers = allUsers.filter((user) => user.room === room);
-    socket.to(room).emit('chatroom_users', chatRoomUsers);
-    socket.emit('chatroom_users', chatRoomUsers);
-
-    socket.emit('receive_message', {
-      message: `Welcome ${user}`,
-      username: CHAT_BOT,
-      __createdtime__,
-    });
-  
-    socket.on("sendMessage", ({ senderId, receiverId, message }) => {
-      const sendUserSocket = onlineUsers.get(receiverId);
-      if (sendUserSocket) {
-        socket.to(sendUserSocket).emit("getMessage", {
-          senderId,
-          message,
-        });
-      }
-    });
-
-    socket.on('send_message', (data) => {
-      const { message, user, room, __createdtime__ } = data;
-      io.in(room).emit('receive_message', data);
-      mongoSaveMessage(message, user, room, __createdtime__) 
-        .then((response) => console.log(response))
-        .catch((err) => console.log(err));
-    });
-  
-    socket.on("disconnect", () => {
-      onlineUsers.delete(getKey(onlineUsers, socket.id));
-      socket.emit("getUsers", Array.from(onlineUsers));
-    });
+  socket.on("addUser", (userId) => {
+    onlineUsers.set(userId, socket.id);
+    socket.emit("getUsers", Array.from(onlineUsers.keys()));
   });
 
-  module.exports = app;
+  socket.on('join_room', (data) => {
+    const { user, room } = data;
+    socket.join(room);
+    broadcastWelcomeMessage(room, user, createdTime);
+  });
+
+  socket.on("sendMessage", (data) => {
+    sendMessageToUser(data, socket);
+  });
+
+  socket.on('send_message', (data) => {
+    broadcastMessage(data);
+  });
+
+  socket.on("disconnect", () => {
+    handleDisconnect(socket);
+  });
+});
+
+function broadcastWelcomeMessage(room, user, createdTime) {
+  socket.to(room).emit('receive_message', {
+    message: `${user} has joined the chat room`,
+    username: CHAT_BOT,
+    createdTime,
+  });
+}
+
+function sendMessageToUser({ senderId, receiverId, message }, socket) {
+  const receiverSocket = onlineUsers.get(receiverId);
+  if (receiverSocket) {
+    socket.to(receiverSocket).emit("getMessage", {
+      senderId,
+      message,
+    });
+  }
+}
+
+function broadcastMessage(data) {
+  const { message, user, room, createdTime } = data;
+  io.in(room).emit('receive_message', data);
+  mongoSaveMessage(message, user, room, createdTime)
+    .then((response) => console.log(response))
+    .catch((err) => console.log(err));
+}
+
+function handleDisconnect(socket) {
+  onlineUsers.delete(getKeyFromValue(onlineUsers, socket.id));
+  socket.emit("getUsers", Array.from(onlineUsers.keys()));
+}
+
+module.exports = app;
+
+// const CHAT_BOT = 'ChatBot'
+// let chatRoom='';
+// chatRoom=room;
+// let allUsers=[];
+// const server = http.createServer(app);
+// const {Server} = require("socket.io");
+// // const PORT = 3001;
+// const io = new Server(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     credentials: true,
+//     methods:['GET','POST'],
+//   },
+// });
+// // io.use(VerifySocketToken);
+// global.onlineUsers = new Map();
+
+// server.listen(4000,()=>'Server is running on port 3000')
+
+// const getKey = (map, val) => {
+//   for (let [key, value] of map.entries()) {
+//     if (value === val) return key;
+//   }
+// };
+
+// io.on("connection", (socket) => {
+//   chatRoom = room;
+//   global.chatSocket = socket;
+  
+//     socket.on("addUser", (userId) => {
+//       onlineUsers.set(userId, socket.id);
+//       socket.emit("getUsers", Array.from(onlineUsers));
+//     });
+    
+//     socket.on('join_room', (data) => {
+//       const { user, room } = data;
+//       socket.join(room); 
+//     });
+
+//     let __createdtime__ = Date.now();
+
+//     socket.to(room).emit('receive_message', {
+//       message: `${user} has joined the chat room`,
+//       username: CHAT_BOT,
+//       __createdtime__,
+//     });
+
+//     allUsers.push({ id: socket.id, user, room });
+//     chatRoomUsers = allUsers.filter((user) => user.room === room);
+//     socket.to(room).emit('chatroom_users', chatRoomUsers);
+//     socket.emit('chatroom_users', chatRoomUsers);
+
+//     socket.emit('receive_message', {
+//       message: `Welcome ${user}`,
+//       username: CHAT_BOT,
+//       __createdtime__,
+//     });
+  
+//     socket.on("sendMessage", ({ senderId, receiverId, message }) => {
+//       const sendUserSocket = onlineUsers.get(receiverId);
+//       if (sendUserSocket) {
+//         socket.to(sendUserSocket).emit("getMessage", {
+//           senderId,
+//           message,
+//         });
+//       }
+//     });
+
+//     socket.on('send_message', (data) => {
+//       const { message, user, room, __createdtime__ } = data;
+//       io.in(room).emit('receive_message', data);
+//       mongoSaveMessage(message, user, room, __createdtime__) 
+//         .then((response) => console.log(response))
+//         .catch((err) => console.log(err));
+//     });
+  
+//     socket.on("disconnect", () => {
+//       onlineUsers.delete(getKey(onlineUsers, socket.id));
+//       socket.emit("getUsers", Array.from(onlineUsers));
+//     });
+//   });
+
+//   module.exports = app;
