@@ -20,13 +20,14 @@ export default function Login() {
     e.preventDefault();
 
     try {
+      setError('')
       setLoading(true);
       await login(email, password);
       navigate("/");
     } catch (e) {
+      setError(true);
       console.log("Failed to login");
     }
-
     setLoading(false);
   }
 
