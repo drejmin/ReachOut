@@ -6,7 +6,7 @@ const socketio = require('socket.io');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const http = require('http');
-// const messagesRouter = require('message');
+const msgRouter = require('message');
 
 dotenv.config();
 
@@ -52,7 +52,7 @@ function initApiRoutes() {
   });
   const User = mongoose.model('User', userSchema);
 
-  // app.use('/message', messagesRouter);
+  app.use('/message', msgRouter);
 
   // Register user
   app.post('/register', async (req, res) => {
