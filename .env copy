@@ -1,0 +1,3 @@
+DATABASE_URL=mongodb+srv://drejminor:traub@cluster0.dbk6yxi.mongodb.net/ReachOut?retryWrites=true&w=majority
+
+SECRET=SEIRocks

@@ -1,259 +1,127 @@
-// server.js
 const express = require('express');
-const path = require('path');
-const favicon = require('serve-favicon');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const session = require('express-session');
 const mongoose = require('mongoose');
-const app = express();
-const http = require('http');
 const cors = require('cors');
+const dotenv = require('dotenv');
+const socketio = require('socket.io');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const http = require('http');
+// const messagesRouter = require('message');
 
+dotenv.config();
 
-//"node server.js",
-//"cd build && npm start",
-
-// // Configure both serve-favicon & static middleware
-// // to serve from the production 'build' folder
-require('dotenv').config();
-require('./config/database');
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(cors());
-
-app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
-app.use(express.static(path.join(__dirname, 'build')));
-
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
-
+const app = express();
+const server = http.Server(app);
+const io = socketio(server);
 
 const port = process.env.PORT || 3001;
 
+// Initialize Middleware
+initMiddleware();
 
-//Google Oauth
+// Initialize MongoDB
+initMongoDB();
 
+// Initialize API Routes
+initApiRoutes();
 
-// view engine setup
-// app.set('app', path.join(__dirname, 'app'));
-// app.set('view engine', 'ejs');
+// Initialize Socket.IO
+initSocketIO();
 
-// app.use(VerifyToken);
+// Initialize the server
+startServer();
 
+function initMiddleware() {
+  app.use(cors());
+  app.use(express.json());
+}
 
-app.use(session({
-  secret: process.env.SECRET,
-  resave: false,
-  saveUninitialized: true
-}));
-
-app.get('./src/pages/App/App.jsx', function(req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
-app.listen(port, function(){
-  console.log(`Server is running on port ${port}`);
-});
-
-// app.use(function (req, res, next) {
-//   res.locals.user = req.user;
-//   next();
-// });
-
-
-// initialize mongoose mongo.db express
-
-
-// app.get('/', (req, res) => {
-//   res.send('Hello, world!');
-// });
-
-// app.get('/', (req, res) => {
-//   res.sendFile(__dirname + '/index.html');
-// });
-// app.get('/api', (req, res) => {
-//   res.json({ message: 'Hello from server!' });
-// });
-
-
-// The following "catch all" route (note the *) is necessary
-// to return the index.html on all non-AJAX/API requests
-
-
-// app.listen(port, function() {
-//   console.log(`Express app running on port ${port}`);
-// });
-
-
-//socket.io
-const { Server } = require("socket.io");
-// const app = require("app"); // Include your app here
-const CHAT_BOT = 'ChatBot';
-
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    credentials: true,
-    methods: ['GET', 'POST'],
-  },
-});
-
-global.onlineUsers = new Map();
-let allUsers = [];
-
-server.listen(4000, () => console.log('Server is running on port 4000'));
-
-const getKeyFromValue = (map, value) => {
-  for (const [key, val] of map.entries()) {
-    if (val === value) return key;
-  }
-  return null;
-};
-
-io.on("connection", (socket) => {
-  const createdTime = Date.now();
-
-  socket.on("addUser", (userId) => {
-    onlineUsers.set(userId, socket.id);
-    socket.emit("getUsers", Array.from(onlineUsers.keys()));
-  });
-
-  socket.on('join_room', (data) => {
-    const { user, room } = data;
-    socket.join(room);
-    broadcastWelcomeMessage(room, user, createdTime);
-  });
-
-  socket.on("sendMessage", (data) => {
-    sendMessageToUser(data, socket);
-  });
-
-  socket.on('send_message', (data) => {
-    broadcastMessage(data);
-  });
-
-  socket.on("disconnect", () => {
-    handleDisconnect(socket);
-  });
-});
-
-function broadcastWelcomeMessage(room, user, createdTime) {
-  socket.to(room).emit('receive_message', {
-    message: `${user} has joined the chat room`,
-    username: CHAT_BOT,
-    createdTime,
+function initMongoDB() {
+  mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+  const connection = mongoose.connection;
+  connection.once('open', () => {
+    console.log('MongoDB connection established successfully');
   });
 }
 
-function sendMessageToUser({ senderId, receiverId, message }, socket) {
-  const receiverSocket = onlineUsers.get(receiverId);
-  if (receiverSocket) {
-    socket.to(receiverSocket).emit("getMessage", {
-      senderId,
-      message,
+function initApiRoutes() {
+  // User Schema
+  const userSchema = new mongoose.Schema({
+    username: String,
+    password: String
+  });
+  const User = mongoose.model('User', userSchema);
+
+  // app.use('/message', messagesRouter);
+
+  // Register user
+  app.post('/register', async (req, res) => {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+    const user = new User({
+      username: req.body.username,
+      password: hashedPassword
     });
+
+    try {
+      await user.save();
+      res.send('User Registered');
+    } catch {
+      res.status(400).send('Registration Failed');
+    }
+  });
+
+  // Login
+  app.post('/login', async (req, res) => {
+    const user = await User.findOne({ username: req.body.username });
+    if (!user) return res.status(400).send('Username or Password is Wrong');
+
+    const validPassword = await bcrypt.compare(req.body.password, user.password);
+    if (!validPassword) return res.status(400).send('Username or Password is Wrong');
+
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    res.header('Authorization', token).send(token);
+  });
+
+  // Protected Route
+  app.get('/protected', authenticateJWT, (req, res) => {
+    res.send('Protected Route Accessed');
+  });
+
+  // Authentication middleware
+  function authenticateJWT(req, res, next) {
+    const token = req.header('Authorization');
+    if (!token) return res.status(401).send('Access Denied');
+
+    try {
+      const verified = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = verified;
+      next();
+    } catch {
+      res.status(400).send('Invalid Token');
+    }
   }
 }
 
-function broadcastMessage(data) {
-  const { message, user, room, createdTime } = data;
-  io.in(room).emit('receive_message', data);
-  mongoSaveMessage(message, user, room, createdTime)
-    .then((response) => console.log(response))
-    .catch((err) => console.log(err));
+function initSocketIO() {
+  io.on('connection', (socket) => {
+    console.log(`Socket ${socket.id} connected`);
+  
+    socket.on('sendMessage', (message) => {
+      io.emit('message', message);
+    });
+  
+    socket.on('disconnect', () => {
+      console.log(`Socket ${socket.id} disconnected`);
+    });
+  });
 }
 
-function handleDisconnect(socket) {
-  onlineUsers.delete(getKeyFromValue(onlineUsers, socket.id));
-  socket.emit("getUsers", Array.from(onlineUsers.keys()));
+function startServer() {
+  server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
 }
 
-module.exports = app;
 
-// const CHAT_BOT = 'ChatBot'
-// let chatRoom='';
-// chatRoom=room;
-// let allUsers=[];
-// const server = http.createServer(app);
-// const {Server} = require("socket.io");
-// // const PORT = 3001;
-// const io = new Server(server, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//     credentials: true,
-//     methods:['GET','POST'],
-//   },
-// });
-// // io.use(VerifySocketToken);
-// global.onlineUsers = new Map();
-
-// server.listen(4000,()=>'Server is running on port 3000')
-
-// const getKey = (map, val) => {
-//   for (let [key, value] of map.entries()) {
-//     if (value === val) return key;
-//   }
-// };
-
-// io.on("connection", (socket) => {
-//   chatRoom = room;
-//   global.chatSocket = socket;
-  
-//     socket.on("addUser", (userId) => {
-//       onlineUsers.set(userId, socket.id);
-//       socket.emit("getUsers", Array.from(onlineUsers));
-//     });
-    
-//     socket.on('join_room', (data) => {
-//       const { user, room } = data;
-//       socket.join(room); 
-//     });
-
-//     let __createdtime__ = Date.now();
-
-//     socket.to(room).emit('receive_message', {
-//       message: `${user} has joined the chat room`,
-//       username: CHAT_BOT,
-//       __createdtime__,
-//     });
-
-//     allUsers.push({ id: socket.id, user, room });
-//     chatRoomUsers = allUsers.filter((user) => user.room === room);
-//     socket.to(room).emit('chatroom_users', chatRoomUsers);
-//     socket.emit('chatroom_users', chatRoomUsers);
-
-//     socket.emit('receive_message', {
-//       message: `Welcome ${user}`,
-//       username: CHAT_BOT,
-//       __createdtime__,
-//     });
-  
-//     socket.on("sendMessage", ({ senderId, receiverId, message }) => {
-//       const sendUserSocket = onlineUsers.get(receiverId);
-//       if (sendUserSocket) {
-//         socket.to(sendUserSocket).emit("getMessage", {
-//           senderId,
-//           message,
-//         });
-//       }
-//     });
-
-//     socket.on('send_message', (data) => {
-//       const { message, user, room, __createdtime__ } = data;
-//       io.in(room).emit('receive_message', data);
-//       mongoSaveMessage(message, user, room, __createdtime__) 
-//         .then((response) => console.log(response))
-//         .catch((err) => console.log(err));
-//     });
-  
-//     socket.on("disconnect", () => {
-//       onlineUsers.delete(getKey(onlineUsers, socket.id));
-//       socket.emit("getUsers", Array.from(onlineUsers));
-//     });
-//   });
-
-//   module.exports = app;
