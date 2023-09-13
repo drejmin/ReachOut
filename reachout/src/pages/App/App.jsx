@@ -11,8 +11,8 @@ import ChatPage from '../ChatPage/ChatPage';
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [room, setRoom] = useState('');
   // const [token, setToken] = useState(null);
+  const [room, setRoom] = useState('');
   const [response, setResponse] = useState("");
   const [endpoint] = useState("http://localhost:3000");
   const socket = socketIOClient(endpoint);
@@ -35,7 +35,7 @@ export default function App() {
 
   return (
     <main className="App">
-    { user ?
+    {/* { //user ? */}
         <>
         <NavBar user={user} />
         <Routes>
@@ -49,14 +49,15 @@ export default function App() {
             <Route path="/chat/room" element={<RoomPage />} />
             <Route path='/chat' element={<ChatPage user={user} room={room} socket={socket} />}/>
         </Routes>
-        <p>
+        {/* <p>
           {response}
-        </p>
-        <button onClick={login}>Login</button>
+        </p> */}
+        </>
+        </main>
+        );
+      }
+        {/* <button onClick={login}>Login</button>
         </>
         :
-       <LoginPage setUser={setUser} />
-    }
-    </main>
-  );
-}
+       <LoginPage setUser={setUser} /> */}
+      
