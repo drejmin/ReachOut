@@ -12,7 +12,7 @@ import ChatPage from '../ChatPage/ChatPage';
 export default function App() {
   const [user, setUser] = useState(null);
   const [room, setRoom] = useState('');
-  const [token, setToken] = useState(null);
+  // const [token, setToken] = useState(null);
   const [response, setResponse] = useState("");
   const [endpoint] = useState("http://localhost:3000");
   const socket = socketIOClient(endpoint);
