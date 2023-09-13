@@ -11,6 +11,7 @@ import ChatPage from '../ChatPage/ChatPage';
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [room, setRoom] = useState('');
   const [response, setResponse] = useState("");
   const [endpoint] = useState("http://localhost:3000");
@@ -19,7 +20,8 @@ export default function App() {
   const login = async () => {
     const { data } = await axios.post('http://localhost:3000/login', {
       username: 'username',
-      password: 'password'
+      password: 'password',
+      token:'token'
     });
     setToken(data);
   };
