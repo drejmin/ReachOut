@@ -6,7 +6,8 @@ const socketio = require('socket.io');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const http = require('http');
-const msgRouter = require('message');
+const {chats} = require('./data/data');
+
 
 dotenv.config();
 
@@ -15,6 +16,25 @@ const server = http.Server(app);
 const io = socketio(server);
 
 const port = process.env.PORT || 3001;
+
+app.get('/', (req,res)=>{
+  res.send("API is Running");
+});
+
+app.get('/api/chat', (req,res)=>{
+  res.send(chats);
+});
+
+app.get('/api/chat/:id', (req,res)=>{
+  // console.log(req.params.id);
+  const singleChat = chats.find(c=>c._id === req.params.id);
+  res.send(singleChat);
+});
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
 
 
 app.use(cors());
@@ -28,13 +48,6 @@ connection.once('open', () => {
   console.log('MongoDB connection established successfully');
 });
 
-const validPassword = await bcrypt.compare(req.body.password, user.password);
-if (!validPassword) return res.status(400).send('Username or Password is Wrong');
-
-const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-res.header('Authorization', token).send(token);
-
-app.use('/message', msgRouter);
 
 io.on('connection', (socket) => {
   console.log(`Socket ${socket.id} connected`);
@@ -48,8 +61,5 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
 
 
