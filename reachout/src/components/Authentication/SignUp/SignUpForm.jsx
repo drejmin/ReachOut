@@ -90,7 +90,7 @@ export default function SignUp(){
 
         const postDetails = (avatars) =>{
             setAvatarLoading(true);
-            if (pics === undefined){
+            if (avatars === undefined){
                 toast({
                     title: "Please Select an Image!",
                     status:"warning",
@@ -137,15 +137,81 @@ export default function SignUp(){
         };
 
     return(
-        <div>
-            <div>
-                {/* create form with sign up and login tab */}
-                {/* Have input text box for name email  for login */}
-                {/* Have input text box for password and pw confirm  */}
-                {/* Have input box for uploading pics */}
-                {/* Have sign up button */}
+        <VStack spacing="5px">
+      <FormControl id="first-name" isRequired>
+        <FormLabel>Name</FormLabel>
+        <Input
+          placeholder="Enter Your Name"
+          onChange={(e) => setName(e.target.value)}
+        />
+      </FormControl>
+      <FormControl id="email" isRequired>
+        <FormLabel>Email Address</FormLabel>
+        <Input
+          type="email"
+          placeholder="Enter Your Email Address"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </FormControl>
+      <FormControl id="password" isRequired>
+        <FormLabel>Password</FormLabel>
+        <InputGroup size="md">
+          <Input
+            type={show ? "text" : "password"}
+            placeholder="Enter Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <InputRightElement width="4.5rem">
+            <Button h="1.75rem" size="sm" onClick={handleClick}>
+              {show ? "Hide" : "Show"}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+      </FormControl>
+      <FormControl id="password" isRequired>
+        <FormLabel>Confirm Password</FormLabel>
+        <InputGroup size="md">
+          <Input
+            type={show ? "text" : "password"}
+            placeholder="Confirm password"
+            onChange={(e) => setConfirmpassword(e.target.value)}
+          />
+          <InputRightElement width="4.5rem">
+            <Button h="1.75rem" size="sm" onClick={handleClick}>
+              {show ? "Hide" : "Show"}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+      </FormControl>
+      <FormControl id="pic">
+        <FormLabel>Upload your Picture</FormLabel>
+        <Input
+          type="file"
+          p={1.5}
+          accept="image/*"
+          onChange={(e) => postDetails(e.target.files[0])}
+        />
+      </FormControl>
+      <Button
+        colorScheme="blue"
+        width="100%"
+        style={{ marginTop: 15 }}
+        onClick={handleSubmit}
+        isLoading={picLoading}
+      >
+        Sign Up
+      </Button>
+    </VStack>
+  );
+};
+        // <div>
+        //     <div>
+        //         {/* create form with sign up and login tab */}
+        //         {/* Have input text box for name email  for login */}
+        //         {/* Have input text box for password and pw confirm  */}
+        //         {/* Have input box for uploading pics */}
+        //         {/* Have sign up button */}
 
-            </div>
-        </div>
-    )
-}
+        //     </div>
+        // </div>
+    
