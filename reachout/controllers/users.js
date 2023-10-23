@@ -1,10 +1,20 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const User = require('../../models/user');
 const asyncHandler = require('express-async-handler');
 const createToken = require("..config/createToken");
-const { error } = require('console');
 
+const getAllUsers = asyncHandler(async (req,res)=>{
+  const keyword = req.query.search
+    ?{
+      $or: [
+        {name: {$regex: req.query.search, $options: "i "}},
+        {email: {$regex: req.query.search, $options: "i "}},
+      ],
+    }
+    :{};
+
+  const users = await User.find(keyword).find({_id: { $ne: req.user._id}});
+  res.send(users);
+})
 
 const registerUser = asyncHandler( async (req,res)=>{
   const {name, email, password, avatar} = req.body;
@@ -24,7 +34,7 @@ const registerUser = asyncHandler( async (req,res)=>{
     name,
     email,
     password,
-    avatar
+    avatar,
 
   });
 
@@ -64,12 +74,9 @@ const authUser = asyncHandler(async (req,res) =>{
 })
 
 module.exports = {
-    // create,
-    // login,
-    // show:getAllUsers,
-    // show: getUser,
     registerUser,
-    authUser
+    authUser,
+    getAllUsers
     
 };
 
