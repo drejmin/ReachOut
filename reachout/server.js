@@ -7,7 +7,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const http = require('http');
 const {chats} = require('./data/data');
-
+const userRoutes = require("./routes/userRoutes");
+const { NOTFOUND } = require('dns');
 
 dotenv.config();
 
@@ -17,37 +18,41 @@ const io = socketio(server);
 
 const port = process.env.PORT || 3001;
 
+//Set up Routes
+
 app.get('/', (req,res)=>{
   res.send("API is Running");
 });
 
-app.get('/api/chat', (req,res)=>{
-  res.send(chats);
-});
+app.use('/api/user', userRoutes)
 
-app.get('/api/chat/:id', (req,res)=>{
-  // console.log(req.params.id);
-  const singleChat = chats.find(c=>c._id === req.params.id);
-  res.send(singleChat);
-});
+// error routes for user not found
+
+app.user(notFound)
+app.user(errorHandler)
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
-
-
 app.use(cors());
 app.use(express.json());
 
+//Mongoose DB connection
 
+mongoose.connect(process.env.DATABASE_URL, {
+   useNewUrlParser: true,
+   useUnifiedTopology: true
+ });
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 const connection = mongoose.connection;
+
 connection.once('open', () => {
   console.log('MongoDB connection established successfully');
 });
 
+
+//Socket Io connection
 
 io.on('connection', (socket) => {
   console.log(`Socket ${socket.id} connected`);
