@@ -1,7 +1,7 @@
 //App.js
 import "./App.css";
-import {Routes, Route} from 'react-router-dom';
-import {React, useState, useEffect } from 'react';
+import {Route} from 'react-router-dom';
+import {React } from 'react';
 import HomePage from '../HomePage/HomePage';
 import ChatPage from '../ChatPage/ChatPage';
 // import NavBar from "../../components/NavBar/NavBar";

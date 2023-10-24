@@ -1,6 +1,11 @@
 import React from "react";
 import { useState } from "react";
-import { VStack, useToast, FormControl, FormLabel, Button } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/button";
+import { FormControl, FormLabel } from "@chakra-ui/form-control";
+import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
+import { VStack } from "@chakra-ui/layout";
+import { useToast } from "@chakra-ui/toast";
+
 import axios from "axios";
 import {useHistory} from "react-router-dom";
 
@@ -197,7 +202,7 @@ export default function SignUp(){
         width="100%"
         style={{ marginTop: 15 }}
         onClick={handleSubmit}
-        isLoading={picLoading}
+        isLoading={avatarLoading}
       >
         Sign Up
       </Button>
