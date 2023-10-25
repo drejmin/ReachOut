@@ -1,13 +1,12 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useHistory } from "react";
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { VStack } from "@chakra-ui/layout";
 import { useToast } from "@chakra-ui/toast";
-
 import axios from "axios";
-import {useHistory} from "react-router-dom";
+
 
 
 export default function SignUp(){
