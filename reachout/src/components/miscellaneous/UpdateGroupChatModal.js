@@ -1,4 +1,4 @@
-import { ViewIcon } from "@chakra-ui/icons";
+// import { ViewIcon } from "@chakra-ui/icons";
 import {
   Modal,
   ModalOverlay,
@@ -19,8 +19,8 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { ChatState } from "../../context/ChatProvider";
-import UserBadgeItem from "../userAvatar/UserBadgeItem";
-import UserListItem from "../userAvatar/UserListItem";
+import UserBadgeItem from "../UserAvatar/UserBadgeItem";
+import UserListItem from "../UserAvatar/UserListItem";
 
 const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -205,7 +205,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
 
   return (
     <>
-      <IconButton d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
+      <IconButton d={{ base: "flex" }} icon={"ViewIcon"} onClick={onOpen} />
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />

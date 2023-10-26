@@ -3,15 +3,16 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const http = require('http');
-const userRoutes = require("./routes/userRoutes");
-const chatroom = require("./routes/chatroom");
-const message = require("./routes/message");
+const userRoutes = require("../reachout/routes/userRoutes");
+const chatroom = require("../reachout/routes/chatroom");
+const message = require("../reachout/routes/message");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
 
 const app = express();
 const server = http.Server(app);
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 // const server = app.listen(
 //   PORT,
@@ -30,8 +31,8 @@ app.use('api/message', message)
 
 // error routes for user not found
 
-app.user(notFound)
-app.user(errorHandler)
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
@@ -47,27 +48,28 @@ mongoose.connect(process.env.DATABASE_URL, {
    useUnifiedTopology: true
  });
 
-const connection = mongoose.connection;
-
-connection.once('open', () => {
-  console.log('MongoDB connection established successfully');
-});
+ const db = mongoose.connection;
+	
+ db.on('connected', function() {
+   console.log(`Connected to MongoDB ${db.name} at ${db.host}:${db.port}`);
+ });
+ 
 
 // deployment
 
-const __dirname1 = path.resolve();
+// const __dirname = path.resolve();
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname1, "/frontend/build")));
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname, "/frontend/build")));
 
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname1, "frontend", "build", "index.html"))
-  );
-} else {
-  app.get("/", (req, res) => {
-    res.send("API is running..");
-  });
-}
+//   app.get("*", (req, res) =>
+//     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+//   );
+// } else {
+//   app.get("/", (req, res) => {
+//     res.send("API is running..");
+//   });
+// }
 
 //Socket Io connection
 
