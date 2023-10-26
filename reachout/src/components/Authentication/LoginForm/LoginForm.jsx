@@ -1,4 +1,5 @@
-import { useState, useHistory } from "react";
+import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
@@ -15,7 +16,7 @@ export default function Login() {
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const { setUser } = ChatState();
 
   const handleSubmit = async () => {
@@ -55,7 +56,7 @@ export default function Login() {
       setUser(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
-      history.push("/chats");
+      navigate.push("/chats");
     } catch (error) {
       toast({
         title: "Error Occured!",

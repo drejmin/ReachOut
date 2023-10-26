@@ -1,6 +1,6 @@
 //App.js
 import "./App.css";
-import {Route} from 'react-router-dom';
+import {Routes,Route} from 'react-router-dom';
 import {React } from 'react';
 import HomePage from '../HomePage/HomePage';
 import ChatPage from '../ChatPage/ChatPage';
@@ -13,8 +13,11 @@ export default function App() {
 
   return (
     <main className="App">
-      <Route path="/" Component={HomePage} exact/>
-      <Route path="/chats" Component={ChatPage} />
+      <Routes>  
+        <Route path="/" element={<HomePage/>} exact/>
+        <Route path="/chats" element={<ChatPage/>} />
+      </Routes>
+    
     </main>
     // <main className="App">
     //    user ?

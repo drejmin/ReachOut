@@ -1,5 +1,6 @@
 import React from "react";
-import { useState, useHistory } from "react";
+import {useNavigate} from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
@@ -13,11 +14,11 @@ export default function SignUp(){
     const [show, setShow] = useState(false);
     const handleClick = ()=> setShow(!show);
     const toast = useToast();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [name, setName]= useState();
     const [email, setEmail]= useState();
-    const [confirmPassword, setConfirmPassword]= useState();
+    const [confirmPassword, setConfirmPassword] = useState();
     const [password, setPassword]= useState();
     const [avatar, setAvatar]= useState();
     const [avatarLoading, setAvatarLoading]= useState(false);
@@ -76,7 +77,7 @@ export default function SignUp(){
                 });
                 localStorage.setItem("userInfo", JSON.stringify(data));
                 setAvatarLoading(false);
-                history.push("/chats");
+                navigate.push("/chats");
 
             } catch (error){
                 toast({
@@ -178,7 +179,7 @@ export default function SignUp(){
           <Input
             type={show ? "text" : "password"}
             placeholder="Confirm password"
-            onChange={(e) => setConfirmpassword(e.target.value)}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={handleClick}>
