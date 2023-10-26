@@ -1,14 +1,16 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const http = require('http');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const userRoutes = require("../reachout/routes/userRoutes");
 const chatroom = require("../reachout/routes/chatroom");
 const message = require("../reachout/routes/message");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
-dotenv.config();
+require('dotenv').config();
+require('../reachout/config/database')
 
 const app = express();
 const server = http.Server(app);
@@ -24,7 +26,9 @@ const port = process.env.PORT || 3000;
 // app.get('/', (req,res)=>{
 //   res.send("API is Running");
 // });
-
+app.use(cookieParser());
+app.use(express.json);
+app.use(logger('dev'));
 app.use('/api/user', userRoutes);
 app.use("/api/chat", chatroom);
 app.use('api/message', message)
@@ -43,16 +47,16 @@ app.use(express.json());
 
 //Mongoose DB connection
 
-mongoose.connect(process.env.DATABASE_URL, {
-   useNewUrlParser: true,
-   useUnifiedTopology: true
- });
+// mongoose.connect(process.env.DATABASE_URL, {
+//    useNewUrlParser: true,
+//    useUnifiedTopology: true
+//  });
 
- const db = mongoose.connection;
+//  const db = mongoose.connection;
 	
- db.on('connected', function() {
-   console.log(`Connected to MongoDB ${db.name} at ${db.host}:${db.port}`);
- });
+//  db.on('connected', function() {
+//    console.log(`Connected to MongoDB ${db.name} at ${db.host}:${db.port}`);
+//  });
  
 
 // deployment
