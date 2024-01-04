@@ -1,0 +1,29 @@
+/* HomePage.css */
+div {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  h1 {
+    font-size: 2.5em;
+    color: #333;
+  }
+  
+  p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
+  
+  a {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    background-color: #0056b3;
+  }
+  
