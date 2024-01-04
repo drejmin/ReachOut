@@ -1,13 +1,35 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const dotenv = require('dotenv');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const path = require('path');
+
 
 // Initialize environment variables
-dotenv.config();
+require('dotenv').config();
+
+require('./config/database');
 
 const app = express();
 const server = http.Server(app);
+
+app.use(logger('dev'));
+app.use(express.json());
+
+// Configure both serve-favicon & static middleware
+// to serve from the production 'build' folder
+app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Middleware to check and verify a JWT and
+// assign the user object from the JWT to req.user
+app.use(require('./config/checkToken'));
+
+const port = process.env.PORT || 3000;
+
+// Put API routes here, before the "catch all" route
+app.use('/api/users', require('./routes/api/users'));
 
 // Import route handlers (ensure correct paths)
 const userRoutes = require('./routes/userRoutes');
@@ -19,14 +41,17 @@ app.use('/users', userRoutes);
 app.use('/chatroom', chatroom);
 app.use('/message', message);
 
-// Error handling middlewares
-const { notFound, errorHandler } = require("./middleware/errorMiddleware");
-app.use(notFound);
-app.use(errorHandler);
-
-app.get('/', (req, res) => {
-  res.send("Hello World");
+// The following "catch all" route (note the *) is necessary
+// to return the index.html on all non-AJAX/API requests
+app.get('/*', function(req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+
+app.listen(port, function() {
+  console.log(`Express app running on port ${port}`);
+});
+
+
 
 // Initialize Socket.IO
 const io = socketIo(server, {
@@ -102,6 +127,3 @@ function setupSocketEventListeners(socket) {
       });
     });
 }
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
