@@ -1,65 +1,60 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as usersService from '../../utilities/users-service';
 
-export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [show, setShow] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleClick = () => setShow(!show);
+export default function LoginForm({setUser}) {
+  
+  const [error, setError] = useState('');
+  const [credentials, setCredentials] = useState({
+    email: '',
+    password: ''
+  });
+  
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    setErrorMessage(''); // Reset error message
-    if (!username || !password) {
-      setErrorMessage("Please fill all the fields");
-      setLoading(false);
-      return;
-    }
+  function handleChange(evt) {
+    setCredentials({ ...credentials, [evt.target.name]: evt.target.value });
+    setError('');
+  }
+
+  async function handleSubmit(evt){
+    evt.preventDefault();
+    console.log('logging in');
     try {
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        // Redirect user or update UI
-      } else {
-        setErrorMessage(data.message || "Login failed");
-      }
-    } catch (error) {
-      setErrorMessage("Network error");
+      // The promise returned by the signUp service method 
+      // will resolve to the user object included in the
+      // payload of the JSON Web Token (JWT)
+      const user = await usersService.login(credentials);
+      setUser(user);
+    } catch {
+      setError('Log In Failed - Try Again');
     }
-    setLoading(false);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {errorMessage && <div>{errorMessage}</div>}
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Enter Username"
-      />
-      <input
-        type={show ? "text" : "password"}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Enter Password"
-      />
-      <button type="button" onClick={handleClick}>Show/Hide Password</button>
-      <button 
-        type="submit"
-        disabled={loading}>
-        {loading ? 'Loading...' : 'Login'}
-      </button>
-    </form>
+    <div>
+      <div className="form-container">
+        <form autoComplete='off' onSubmit={handleSubmit}>
+          <label>username</label>
+          <input
+            type="text"
+            onChange={handleChange} 
+            value={(credentials.username)}
+            placeholder="Enter Username"
+            required
+          />
+          <label>Password</label>
+          <input
+            type={show ? "text" : "password"}
+            name='password'
+            value={credentials.password}
+            onChange={handleChange}
+            placeholder="Enter Password"
+            required
+          />
+          <button type="submit">LOG IN</button>
+        </form>
+    </div>
+      <p className="error-message">&nbsp;{error}</p>
+    </div>
   );
 }

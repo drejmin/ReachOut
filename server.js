@@ -11,8 +11,8 @@ const server = http.Server(app);
 
 // Import route handlers (ensure correct paths)
 const userRoutes = require('./routes/userRoutes');
-const chatroom = require("./routes/chatroom");
-const message = require("./routes/message");
+const chatroom = require("./client/routes/chatroom");
+const message = require("./client/routes/message");
 
 // Use route handlers
 app.use('/users', userRoutes);
