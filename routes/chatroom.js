@@ -1,21 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const chatsCtrl = require('../controllers/chatroom');
+const ensureLoggedIn = require('../config/ensureLoggedIn');
 
-const {
-  accessChat,
-  fetchChats,
-  createGroupChat,
-  removeFromGroup,
-  addToGroup,
-  renameGroup,
-} = require("../controllers/chatroom");
 
-router.post('/', accessChat);
-router.post('/', fetchChats);
-router.post('/', createGroupChat);
-router.put('/rename', renameGroup);
-router.put('/groupremove', removeFromGroup);
-router.put('/groupadd', addToGroup);
+router.post('/', chatsCtrl.accessChat);
+router.post('/', chatsCtrl.fetchChats);
+router.post('/', chatsCtrl.createGroupChat);
+router.put('/rename', chatsCtrl.renameGroup);
+router.put('/groupremove', chatsCtrl.removeFromGroup);
+router.put('/groupadd', ensureLoggedIn, chatsCtrl.addToGroup);
 
 module.exports = router;
 

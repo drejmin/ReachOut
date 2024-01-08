@@ -44,7 +44,7 @@ export default function LoginForm({setUser}) {
           />
           <label>Password</label>
           <input
-            type={show ? "text" : "password"}
+            type={"password"}
             name='password'
             value={credentials.password}
             onChange={handleChange}

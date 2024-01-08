@@ -52,8 +52,9 @@ async function login(req, res){
       // Client will check for non-2xx status code 
       // 400 = Bad Request
       res.status(400).json(err);
+      throw new Error('Bad Request')
     }
-    const userExists = await User.findOne({email});
+    const userExists = await User.findOne({email:req.body.email});
 
     if (userExists){
       res.status(400);

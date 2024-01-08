@@ -30,16 +30,14 @@ const port = process.env.PORT || 3000;
 
 // Put API routes here, before the "catch all" route
 app.use('/api/users', require('./routes/api/users'));
+app.use('/chatroom', require('./routes/chatroom'));
+app.use('/message', require("./routes/message"));
 
 // Import route handlers (ensure correct paths)
-const userRoutes = require('./routes/userRoutes');
-const chatroom = require("./client/routes/chatroom");
-const message = require("./client/routes/message");
+const message = require("./routes/message");
 
 // Use route handlers
-app.use('/users', userRoutes);
-app.use('/chatroom', chatroom);
-app.use('/message', message);
+// app.use('/users', userRoutes);
 
 // The following "catch all" route (note the *) is necessary
 // to return the index.html on all non-AJAX/API requests

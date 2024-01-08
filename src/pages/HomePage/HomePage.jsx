@@ -1,9 +1,10 @@
 import './HomePage.css';
 import {React, useEffect, useState} from 'react';
-import { Link, useNavigate, Routes, Route } from 'react-router-dom';
+import { useNavigate, Routes, Route } from 'react-router-dom';
 import { getUser } from '../../utilities/users-service';
-import NavBar from '../../components/NavBar/NavBar';
+import NavBar from '../../components/authorization/NavBar/NavBar';
 import AuthPage from '../AuthPage/AuthPage';
+// import ChatRoom from '../ChatRoomPage/ChatRoomPage';
 // import LoginForm from '../../components/authorization/LoginForm';
 // import SignUpForm from '../../components/authorization/SignUpForm';
 
@@ -30,8 +31,8 @@ export default function HomePage() {
           <p>Connect and chat in real-time with people around the world.</p>
           <Routes>
             <Route exact path="/" element={<HomePage />} />
-            <Route path="/chats" element={<ChatRoomPage />} />
-            <Route path="/orders" element={<OrderHistoryPage />} />
+            {/* <Route path="/chats" element={<ChatRoomPage />} /> */}
+            
           </Routes>
           {/* <Link to="/chats">Go to Chat Rooms</Link> 
           <Link to="/login">Login</Link>

@@ -1,10 +1,10 @@
 const Message = require ("../models/message.js");
 const User = require("../models/user.js");
 const Chat = require("../models/chat.js");
-const expressAsyncHandler = require("express-async-handler");
 
 
-const allMsgs = expressAsyncHandler( async(req,res)=>{
+
+async function allMsgs(req,res){
     try{
         const messages = await Message.find({ chat: req.params.chatId})
             .populate("sender", "name avatar email")
@@ -14,9 +14,9 @@ const allMsgs = expressAsyncHandler( async(req,res)=>{
         res.status(400);
         throw new Error(error.message)
     }
-})
+}
 
-const sendMsg = expressAsyncHandler(async (req, res)=>{
+async function sendMsg(req, res){
     const {content, chatId} = req.body;
 
     if (!content || !chatId){
@@ -47,7 +47,7 @@ const sendMsg = expressAsyncHandler(async (req, res)=>{
         res.status(400);
         throw new Error(error.message);
     }
-    });
+    };
 
     module.exports = { 
         allMsgs,

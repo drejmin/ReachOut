@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 
+const SALT_ROUNDS = 6;
 
 const userSchema =new Schema({
     username: {
@@ -58,12 +59,10 @@ userSchema.methods.matchPassword= async function (enteredPassword){
 }
 
 userSchema.pre('save', async function (next){
-    if (!this.isModified){
-        next()
+    if (!this.isModified('password')){
+        this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
+       return next();
     }
-
-    const salt = await bcrypt.genSalt(6);
-    this.password = await bcrypt.hash(this.password, salt);
-})
+});
 
 module.exports = mongoose.model('User', userSchema);
