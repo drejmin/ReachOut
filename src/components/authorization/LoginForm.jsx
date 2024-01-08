@@ -6,7 +6,7 @@ export default function LoginForm({setUser}) {
   
   const [error, setError] = useState('');
   const [credentials, setCredentials] = useState({
-    email: '',
+    username: '',
     password: ''
   });
   
