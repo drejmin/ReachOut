@@ -34,7 +34,7 @@ app.use('/chatroom', require('./routes/chatroom'));
 app.use('/message', require("./routes/message"));
 
 // Import route handlers (ensure correct paths)
-const message = require("./routes/message");
+// const message = require("./routes/message");
 
 // Use route handlers
 // app.use('/users', userRoutes);
@@ -113,7 +113,7 @@ function setupSocketEventListeners(socket) {
         if (!chat.users) return console.log("chat.users not defined");
     
         chat.users.forEach((user) => {
-          if (user._id == newMessageRecieved.sender._id) return;
+          if (user._id === newMessageRecieved.sender._id) return;
     
           socket.in(user._id).emit("message recieved", newMessageRecieved);
         });
@@ -121,7 +121,7 @@ function setupSocketEventListeners(socket) {
     
       socket.off("setup", () => {
         console.log("USER DISCONNECTED");
-        socket.leave(userData._id);
+        // socket.leave(userData._id);
       });
     });
 }
